@@ -439,6 +439,4 @@ const calculateLowestLocation = (input: string) => {
 const lowestLocationNumber = calculateLowestLocation(input);
 const answer = lowestLocationNumber.toString();
 
-console.log(answer);
-
 export default answer;
