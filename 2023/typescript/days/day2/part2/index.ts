@@ -1,65 +1,78 @@
-import data from './data';
+import fs from 'fs';
+import { join } from 'path';
+import input from './data';
 
-type GameInformation = {
-  redMaxCount: number;
-  blueMaxCount: number;
-  greenMaxCount: number;
-};
-const parseInputData = (s: string) => {
-  const games = s.split('\n');
-  const gameToGameInformationDictionary: Record<number, GameInformation> = {};
-  for (let i = 0; i < games.length; i++) {
-    const game = games[i];
-    let redMaxCount = 0;
-    let blueMaxCount = 0;
-    let greenMaxCount = 0;
-    const gameDataString = game.split(':')[1].trim();
-    const bagPulls = gameDataString.split(';');
-    for (let j = 0; j < bagPulls.length; j++) {
-      const bagPull = bagPulls[j].trim();
-      const colorStrings = bagPull.split(',');
-      for (let k = 0; k < colorStrings.length; k++) {
-        let colorString = colorStrings[k].trim();
-        let [numberString, color] = colorString.split(' ');
-        const number = +numberString;
-        switch (color) {
-          case 'blue':
-            blueMaxCount = number > blueMaxCount ? number : blueMaxCount;
-            break;
+let cachedAnswer: string | undefined;
+try {
+  const filePath = join(__dirname, 'answer.txt');
+  cachedAnswer = fs.readFileSync(filePath, { encoding: 'utf-8' });
+} catch (e) {}
 
-          case 'red':
-            redMaxCount = number > redMaxCount ? number : redMaxCount;
-            break;
+const solve = () => {
+  type GameInformation = {
+    redMaxCount: number;
+    blueMaxCount: number;
+    greenMaxCount: number;
+  };
+  const parseInputData = (s: string) => {
+    const games = s.split('\n');
+    const gameToGameInformationDictionary: Record<number, GameInformation> = {};
+    for (let i = 0; i < games.length; i++) {
+      const game = games[i];
+      let redMaxCount = 0;
+      let blueMaxCount = 0;
+      let greenMaxCount = 0;
+      const gameDataString = game.split(':')[1].trim();
+      const bagPulls = gameDataString.split(';');
+      for (let j = 0; j < bagPulls.length; j++) {
+        const bagPull = bagPulls[j].trim();
+        const colorStrings = bagPull.split(',');
+        for (let k = 0; k < colorStrings.length; k++) {
+          let colorString = colorStrings[k].trim();
+          let [numberString, color] = colorString.split(' ');
+          const number = +numberString;
+          switch (color) {
+            case 'blue':
+              blueMaxCount = number > blueMaxCount ? number : blueMaxCount;
+              break;
 
-          default:
-            greenMaxCount = number > greenMaxCount ? number : greenMaxCount;
-            break;
+            case 'red':
+              redMaxCount = number > redMaxCount ? number : redMaxCount;
+              break;
+
+            default:
+              greenMaxCount = number > greenMaxCount ? number : greenMaxCount;
+              break;
+          }
         }
+
+        gameToGameInformationDictionary[i + 1] = {
+          redMaxCount,
+          blueMaxCount,
+          greenMaxCount,
+        };
       }
-
-      gameToGameInformationDictionary[i + 1] = {
-        redMaxCount,
-        blueMaxCount,
-        greenMaxCount,
-      };
     }
-  }
 
-  return gameToGameInformationDictionary;
+    return gameToGameInformationDictionary;
+  };
+
+  const parsedInputData = parseInputData(input);
+
+  const answer = Object.entries(parsedInputData)
+    .map(([, value]) => {
+      const { redMaxCount, blueMaxCount, greenMaxCount } = value;
+      return redMaxCount * blueMaxCount * greenMaxCount;
+    })
+    .reduce((acc, prev) => prev + acc, 0)
+    .toString();
+  return answer;
 };
 
-const parsedInputData = parseInputData(data);
-
-const redCubes = 12;
-const greenCubes = 13;
-const blueCubes = 14;
-
-const answer = Object.entries(parsedInputData)
-  .map(([, value]) => {
-    const { redMaxCount, blueMaxCount, greenMaxCount } = value;
-    return redMaxCount * blueMaxCount * greenMaxCount;
-  })
-  .reduce((acc, prev) => prev + acc, 0)
-  .toString();
+const answer = cachedAnswer ?? `${solve()}`;
+if (!cachedAnswer) {
+  const filePath = join(__dirname, 'answer.txt');
+  fs.writeFileSync(filePath, answer, { encoding: 'utf-8' });
+}
 
 export default answer;
