@@ -131,11 +131,10 @@ const solve = () => {
   return sum;
 };
 
-const answer = `${solve()}`;
-// const answer = cachedAnswer ?? `${solve()}`;
-// if (!cachedAnswer) {
-//   const filePath = join(__dirname, 'answer.txt');
-//   fs.writeFileSync(filePath, answer, { encoding: 'utf-8' });
-// }
+const answer = cachedAnswer ?? `${solve()}`;
+if (!cachedAnswer) {
+  const filePath = join(__dirname, 'answer.txt');
+  fs.writeFileSync(filePath, answer, { encoding: 'utf-8' });
+}
 
 export default answer;
