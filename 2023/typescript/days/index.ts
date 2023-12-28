@@ -18,6 +18,8 @@ import day9Part1 from './day9/part1';
 import day9Part2 from './day9/part2';
 import day10Part1 from './day10/part1';
 import day10Part2 from './day10/part2';
+import day11Part1 from './day11/part1';
+import day11Part2 from './day11/part2';
 
 const day1 = [day1Part1, day1Part2];
 const day2 = [day2Part1, day2Part2];
@@ -29,6 +31,7 @@ const day7 = [day7Part1, day7Part2];
 const day8 = [day8Part1, day8Part2];
 const day9 = [day9Part1, day9Part2];
 const day10 = [day10Part1, day10Part2];
+const day11 = [day11Part1, day11Part2];
 
 const answers: Array<string | string[]> = [
   day1,
@@ -41,6 +44,7 @@ const answers: Array<string | string[]> = [
   day8,
   day9,
   day10,
+  day11,
 ];
 
 export default answers;
