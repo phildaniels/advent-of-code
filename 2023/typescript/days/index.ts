@@ -24,8 +24,8 @@ import day12Part1 from './day12/part1';
 import day12Part2 from './day12/part2';
 import day13Part1 from './day13/part1';
 import day13Part2 from './day13/part2';
-import day13Part1 from './day14/part1';
-import day13Part2 from './day14/part2';
+import day14Part1 from './day14/part1';
+import day14Part2 from './day14/part2';
 
 const day1 = [day1Part1, day1Part2];
 const day2 = [day2Part1, day2Part2];
