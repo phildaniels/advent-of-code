@@ -174,12 +174,10 @@ const solve = () => {
   return 100 * horizontalSum + verticalSum;
 };
 
-const answer = `${solve()}`;
-// const answer = cachedAnswer ?? `${solve()}`;
-// if (!cachedAnswer) {
-//   const filePath = join(__dirname, 'answer.txt');
-//   fs.writeFileSync(filePath, answer, { encoding: 'utf-8' });
-// }
+const answer = cachedAnswer ?? `${solve()}`;
+if (!cachedAnswer) {
+  const filePath = join(__dirname, 'answer.txt');
+  fs.writeFileSync(filePath, answer, { encoding: 'utf-8' });
+}
 
 export default answer;
-// 31954
