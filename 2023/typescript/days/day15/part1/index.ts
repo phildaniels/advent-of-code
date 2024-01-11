@@ -9,8 +9,30 @@ try {
 } catch (e) {}
 
 const solve = () => {
-  console.log(input);
-  return 0;
+  const hashAlgorithm = (s: string) => {
+    let currentValue = 0;
+    for (let i = 0; i < s.length; i++) {
+      const asciiCode = s.charCodeAt(i);
+      currentValue = currentValue + asciiCode;
+      currentValue = currentValue * 17;
+      currentValue = currentValue % 256;
+    }
+
+    return currentValue;
+  };
+
+  const calculateSumOfInitalizationSequence = (ss: string[]) => {
+    let sum = 0;
+    for (let i = 0; i < ss.length; i++) {
+      const s = ss[i];
+      sum += hashAlgorithm(s);
+    }
+
+    return sum;
+  };
+
+  const initializationSequence = input.split('\n').join('').split(',');
+  return calculateSumOfInitalizationSequence(initializationSequence);
 };
 
 const answer = cachedAnswer ?? `${solve()}`;
