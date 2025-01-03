@@ -1,10 +1,4 @@
-const getProblemText = async () => {
-  const data = Bun.file("data.txt");
-  const text = await data.text();
-  return text;
-};
-
-const getProblemLines = (text: string) => text.split("\n");
+import { getProblemLinesFromText } from "../utils";
 
 const partOne = (lines: string[]) => {
   const left: number[] = [];
@@ -55,8 +49,6 @@ const partTwo = (lines: string[]) => {
   return sum;
 };
 
-const text = await getProblemText();
-const lines = getProblemLines(text);
+const lines = await getProblemLinesFromText(__dirname);
 
-console.log("part one:", partOne(lines));
-console.log("part two:", partTwo(lines));
+export default { partOne: () => partOne(lines), partTwo: () => partTwo(lines) };
