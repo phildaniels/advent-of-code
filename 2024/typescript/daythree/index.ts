@@ -1,4 +1,4 @@
-import { getProblemLinesFromText, getProblemText } from "../utils";
+import { getProblemText } from "../utils";
 
 const multiplyAndSumMatches = (matches: RegExpExecArray[]) =>
   matches.reduce(
