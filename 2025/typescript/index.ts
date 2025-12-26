@@ -7,10 +7,10 @@ const problems = [
     partOne: dayone.partOne,
     partTwo: dayone.partTwo,
   },
-  {
-    partOne: daytwo.partOne,
-    partTwo: daytwo.partTwo,
-  },
+  // {
+  //   partOne: daytwo.partOne,
+  //   partTwo: daytwo.partTwo,
+  // },
   {
     partOne: daythree.partOne,
     partTwo: daythree.partTwo,
