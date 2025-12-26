@@ -13,7 +13,7 @@ export const getProblemLinesFromText = async (cwd: string) => {
   return lines;
 };
 
-export const getCommaSeparatedEntriesFromText = async (cwd: string) => {
+export const getCommaSeparatedItemsFromText = async (cwd: string) => {
   const text = await getProblemText(cwd);
   const lines = getDelimitedEntries(text, ",");
   return lines;
