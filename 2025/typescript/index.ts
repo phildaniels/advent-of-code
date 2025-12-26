@@ -1,5 +1,6 @@
 import dayone from "./dayone";
 import daytwo from "./daytwo";
+import daythree from "./daythree";
 
 const problems = [
   {
@@ -9,6 +10,10 @@ const problems = [
   {
     partOne: daytwo.partOne,
     partTwo: daytwo.partTwo,
+  },
+  {
+    partOne: daythree.partOne,
+    partTwo: daythree.partTwo,
   },
 ];
 
