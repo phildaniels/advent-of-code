@@ -4,10 +4,17 @@ export const getProblemText = async (cwd: string) => {
   return text;
 };
 
-export const getProblemLines = (text: string) => text.split("\n");
+const getDelimitedEntries = (text: string, delimiter: string) =>
+  text.split(delimiter);
 
 export const getProblemLinesFromText = async (cwd: string) => {
   const text = await getProblemText(cwd);
-  const lines = getProblemLines(text);
+  const lines = getDelimitedEntries(text, "\n");
+  return lines;
+};
+
+export const getCommaSeparatedEntriesFromText = async (cwd: string) => {
+  const text = await getProblemText(cwd);
+  const lines = getDelimitedEntries(text, ",");
   return lines;
 };

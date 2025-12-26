@@ -1,10 +1,15 @@
 import dayone from "./dayone";
+import daytwo from "./daytwo";
 
 const problems = [
   {
     partOne: dayone.partOne,
     partTwo: dayone.partTwo,
-  }
+  },
+  {
+    partOne: daytwo.partOne,
+    partTwo: daytwo.partTwo,
+  },
 ];
 
 for (const [index, problem] of problems.entries()) {
