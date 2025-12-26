@@ -33,7 +33,7 @@ const simulateTurns = (
 
 const partOne = (lines: string[]) => {
   let position = STARTING_POSITION;
-  console.log(`- The dial starts by pointing at ${STARTING_POSITION}`);
+  //   console.log(`- The dial starts by pointing at ${STARTING_POSITION}`);
   let countOfZeroes = 0;
   for (const line of lines) {
     const [direction, ...rest] = line.split("") as ["L" | "R", string[]];
@@ -55,7 +55,7 @@ const partOne = (lines: string[]) => {
 
 const partTwo = (lines: string[]) => {
   let position = STARTING_POSITION;
-  console.log(`- The dial starts by pointing at ${STARTING_POSITION}`);
+  //   console.log(`- The dial starts by pointing at ${STARTING_POSITION}`);
   let countOfZeroes = 0;
   for (const line of lines) {
     const [direction, ...rest] = line.split("") as ["L" | "R", string[]];
