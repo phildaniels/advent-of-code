@@ -1,18 +1,18 @@
 import { getCommaSeparatedItemsFromText } from "../utils";
 
-const entries = await getCommaSeparatedItemsFromText(__dirname);
+const items = await getCommaSeparatedItemsFromText(__dirname);
 
 const parseText = () => {};
 
-const partOne = (entries: string[]) => {
+const partOne = (items: string[]) => {
   return 0;
 };
 
-const partTwo = (entries: string[]) => {
+const partTwo = (items: string[]) => {
   return 0;
 };
 
 export default {
-  partOne: () => partOne(entries),
-  partTwo: () => partTwo(entries),
+  partOne: () => partOne(items),
+  partTwo: () => partTwo(items),
 };
