@@ -76,9 +76,9 @@ export const writeCachedAnswers = async (cwd: string, answers: Answers) => {
     Object.entries(answers).filter(([, value]) => value !== undefined)
   );
 
-  const fiveMinutes = Temporal.Duration.from({ minutes: 5 });
+  const duration = Temporal.Duration.from({ hours: 24 });
   const cacheEntry: CachedEntry<Answers> = {
-    timeToLive: Temporal.Now.instant().add(fiveMinutes).epochMilliseconds,
+    timeToLive: Temporal.Now.instant().add(duration).epochMilliseconds,
     entry: modifiedAnswers,
   };
 
