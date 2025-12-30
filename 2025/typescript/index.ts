@@ -1,19 +1,24 @@
 import dayone from "./dayone";
 import daytwo from "./daytwo";
 import daythree from "./daythree";
+import dayfour from "./dayfour";
 
 const problems = [
   {
     partOne: dayone.partOne,
     partTwo: dayone.partTwo,
   },
-  // {
-  //   partOne: daytwo.partOne,
-  //   partTwo: daytwo.partTwo,
-  // },
+  {
+    partOne: daytwo.partOne,
+    partTwo: daytwo.partTwo,
+  },
   {
     partOne: daythree.partOne,
     partTwo: daythree.partTwo,
+  },
+  {
+    partOne: dayfour.partOne,
+    partTwo: dayfour.partTwo,
   },
 ];
 
