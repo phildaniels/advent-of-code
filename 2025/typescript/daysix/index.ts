@@ -124,6 +124,7 @@ const partOne = (lines: string[]) => {
 const partTwo = (lines: string[]) => {
   const linesWithNumbersReversed = lines
     .slice(0, lines.length - 1)
+    // reverse it simply to make iterating work better in my brain
     .map((line) => [...line].toReversed().join(""));
 
   const rows = linesWithNumbersReversed.length;
@@ -135,8 +136,8 @@ const partTwo = (lines: string[]) => {
     throw `Last line of input was not arithmetic operators`;
   }
 
-  let numsToOperateOn = [];
-  let sum = 0;
+  let numsToOperateOn: number[] = [];
+  let arithmeticOperations: ArithmeticOperation[] = [];
   for (let col = 0; col < columns; col++) {
     const numInColumnChars: string[] = [];
     for (let row = 0; row < rows; row++) {
@@ -149,19 +150,12 @@ const partTwo = (lines: string[]) => {
     }
 
     if (numInColumnChars.length === 0) {
-      const operator = operators.pop();
+      const operator = operators.pop() as "+" | "*";
       //   console.log(numsToOperateOn, operator);
-      if (operator === "+") {
-        sum += numsToOperateOn.reduce(
-          (previous, current) => previous + current,
-          0
-        );
-      } else {
-        sum += numsToOperateOn.reduce(
-          (previous, current) => previous * current,
-          1
-        );
-      }
+      arithmeticOperations.push({
+        operationType: operator,
+        numbers: numsToOperateOn,
+      });
       numsToOperateOn = [];
       continue;
     }
@@ -169,12 +163,16 @@ const partTwo = (lines: string[]) => {
     numsToOperateOn.push(+numInColumnChars.join(""));
   }
 
-  const operator = operators.pop();
-  //   console.log(numsToOperateOn, operator);
-  if (operator === "+") {
-    sum += numsToOperateOn.reduce((previous, current) => previous + current, 0);
-  } else {
-    sum += numsToOperateOn.reduce((previous, current) => previous * current, 1);
+  const operator = operators.pop() as "+" | "*";
+  arithmeticOperations.push({
+    operationType: operator,
+    numbers: numsToOperateOn,
+  });
+
+  let sum = 0;
+  for (const arithmeticOperation of arithmeticOperations) {
+    const result = evaluateArithmeticOperation(arithmeticOperation);
+    sum += result;
   }
 
   return sum;
