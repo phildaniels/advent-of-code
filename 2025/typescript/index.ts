@@ -1,10 +1,11 @@
+import { getCachedAnswers, writeCachedAnswers, type Answers } from "./utils";
 import dayone from "./dayone";
 import daytwo from "./daytwo";
 import daythree from "./daythree";
 import dayfour from "./dayfour";
 import dayfive from "./dayfive";
 import daysix from "./daysix";
-import { getCachedAnswers, writeCachedAnswers, type Answers } from "./utils";
+import dayseven from "./dayseven";
 
 const problems = [
   {
@@ -35,6 +36,11 @@ const problems = [
   {
     partOne: daysix.partOne,
     partTwo: daysix.partTwo,
+    cache: true,
+  },
+  {
+    partOne: dayseven.partOne,
+    partTwo: dayseven.partTwo,
     cache: false,
   },
 ];
