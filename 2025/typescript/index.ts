@@ -7,6 +7,7 @@ import dayfive from "./dayfive";
 import daysix from "./daysix";
 import dayseven from "./dayseven";
 import dayeight from "./dayeight";
+import daynine from "./daynine";
 
 const problems = [
   {
@@ -47,6 +48,11 @@ const problems = [
   {
     partOne: dayeight.partOne,
     partTwo: dayeight.partTwo,
+    cache: true,
+  },
+  {
+    partOne: daynine.partOne,
+    partTwo: daynine.partTwo,
     cache: false,
   },
 ];
