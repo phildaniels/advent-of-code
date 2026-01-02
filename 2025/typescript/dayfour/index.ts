@@ -1,37 +1,6 @@
-import { isTypeQueryNode } from "typescript";
-import { getProblemLinesFromText } from "../utils";
+import { getProblemLinesFromText, getAdjacentCells } from "../utils";
 
 const lines = await getProblemLinesFromText(__dirname);
-
-type Position = [number, number];
-
-const getAdjacentCells = (
-  [xPosition, yPosition]: Position,
-  lines: string[]
-) => {
-  const positions: Array<[number, number]> = [
-    [xPosition, yPosition + 1],
-    [xPosition, yPosition - 1],
-    [xPosition + 1, yPosition],
-    [xPosition + 1, yPosition + 1],
-    [xPosition + 1, yPosition - 1],
-    [xPosition - 1, yPosition],
-    [xPosition - 1, yPosition + 1],
-    [xPosition - 1, yPosition - 1],
-  ];
-  return positions
-    .map(([xPos, yPos]) => {
-      const newTuple: [Position, string | undefined] = [
-        [xPos, yPos],
-        lines[xPos]?.[yPos],
-      ];
-      return newTuple;
-    })
-    .filter((tuple): tuple is [Position, string] => {
-      const [, value] = tuple;
-      return !!value;
-    });
-};
 
 const partOne = (lines: string[]) => {
   let count = 0;

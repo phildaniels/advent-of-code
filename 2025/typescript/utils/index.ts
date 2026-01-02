@@ -84,3 +84,89 @@ export const writeCachedAnswers = async (cwd: string, answers: Answers) => {
 
   await writeText(cwd, "answers.txt", JSON.stringify(cacheEntry));
 };
+
+export type Position = [number, number];
+
+export const getAdjacentCells = (
+  [xPosition, yPosition]: Position,
+  lines: string[]
+) => {
+  const positions: Array<[number, number]> = [
+    [xPosition, yPosition + 1],
+    [xPosition, yPosition - 1],
+    [xPosition + 1, yPosition],
+    [xPosition + 1, yPosition + 1],
+    [xPosition + 1, yPosition - 1],
+    [xPosition - 1, yPosition],
+    [xPosition - 1, yPosition + 1],
+    [xPosition - 1, yPosition - 1],
+  ];
+  return positions
+    .map(([xPos, yPos]) => {
+      const newTuple: [Position, string | undefined] = [
+        [xPos, yPos],
+        lines[xPos]?.[yPos],
+      ];
+      return newTuple;
+    })
+    .filter((tuple): tuple is [Position, string] => {
+      const [, value] = tuple;
+      return !!value;
+    });
+};
+
+export const positionsIncludePosition = (
+  positions: Position[],
+  [xPosition, yPosition]: Position
+) =>
+  positions.some(
+    ([currentX, currentY]) => currentX === xPosition && currentY === yPosition
+  );
+
+export const getPositionVisuallyBelowCurrentPosition = (
+  [currentX, currentY]: Position,
+  lines: string[]
+) => {
+  const belowPosition: Position = [currentX + 1, currentY];
+
+  if (lines[belowPosition[0]]?.[belowPosition[1]]) {
+    return belowPosition;
+  }
+
+  return undefined;
+};
+
+export const getPositionsVisuallyLeftAndRightOfCurrentPosition = (
+  [currentX, currentY]: Position,
+  lines: string[]
+) => {
+  const left: Position = [currentX, currentY - 1];
+  const right: Position = [currentX, currentY + 1];
+
+  const leftValid = !!lines[left[0]]?.[left[1]];
+  const rightValid = !!lines[right[0]]?.[right[1]];
+
+  const positionsToReturn: Position[] = [];
+
+  if (leftValid) {
+    positionsToReturn.push(left);
+  }
+
+  if (rightValid) {
+    positionsToReturn.push(right);
+  }
+
+  return positionsToReturn;
+};
+
+export const generateKeyFromPosition = ([positionX, positionY]: Position) =>
+  `${positionX}_${positionY}`;
+
+export const generatePositionFromKey = (key: string) => {
+  const numbers = key.split("_").map((char) => +char);
+  if (numbers.length !== 2) {
+    throw `Invalid key ${key}`;
+  }
+
+  return numbers;
+};

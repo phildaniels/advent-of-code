@@ -72,6 +72,5 @@ for (const [index, problem] of problems.entries()) {
   } else {
     answerCache[day] = undefined;
   }
+  await writeCachedAnswers(__dirname, answerCache);
 }
-
-await writeCachedAnswers(__dirname, answerCache);
