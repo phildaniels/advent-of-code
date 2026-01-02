@@ -47,7 +47,7 @@ const problems = [
   {
     partOne: dayeight.partOne,
     partTwo: dayeight.partTwo,
-    cache: true,
+    cache: false,
   },
 ];
 

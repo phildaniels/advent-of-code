@@ -170,3 +170,92 @@ export const generatePositionFromKey = (key: string) => {
 
   return numbers;
 };
+
+export type Coordinate = [number, number, number];
+
+export const sortCoordinatesInPlace = (coordinates: Coordinate[]) =>
+  coordinates.sort(([aX, aY, aZ], [bX, bY, bZ]) => {
+    if (aX === bX) {
+      if (aY === bY) {
+        return aZ - bZ;
+      }
+
+      return aY - bY;
+    }
+
+    return aX - bX;
+  });
+
+export const getDistanceBetweenCoordinates = (
+  [leftX, leftY, leftZ]: Coordinate,
+  [rightX, rightY, rightZ]: Coordinate
+) => {
+  const deltaX = Math.abs(leftX - rightX);
+  const deltaY = Math.abs(leftY - rightY);
+  const deltaZ = Math.abs(leftZ - rightZ);
+
+  const deltaXSquared = deltaX * deltaX;
+  const deltaYSquared = deltaY * deltaY;
+  const deltaZSquared = deltaZ * deltaZ;
+
+  const straightLineDistance = Math.sqrt(
+    deltaXSquared + deltaYSquared + deltaZSquared
+  );
+
+  return straightLineDistance;
+};
+
+export const generateKeyFromCoordinate = ([x, y, z]: Coordinate) =>
+  `${x},${y},${z}`;
+
+export const generateCompoundKeyFromCoordinates = (
+  left: Coordinate,
+  right: Coordinate
+) => {
+  const [leftX, leftY, leftZ] = left;
+  const [rightX, rightY, rightZ] = right;
+
+  const [finalLeft, finalRight] =
+    leftX === rightX
+      ? leftY === rightY
+        ? leftZ === rightZ
+          ? [left, right]
+          : leftZ > rightZ
+          ? [left, right]
+          : [right, left]
+        : leftY > rightY
+        ? [left, right]
+        : [right, left]
+      : leftX > rightX
+      ? [left, right]
+      : [right, left];
+
+  return `${generateKeyFromCoordinate(finalLeft)}_${generateKeyFromCoordinate(
+    finalRight
+  )}`;
+};
+export const generateCoordinateFromKey = (key: string) => {
+  const numbers = key.split(",").map((char) => +char);
+  if (numbers.length !== 3) {
+    throw `Invalid key ${key}`;
+  }
+
+  return numbers;
+};
+
+export const getExhaustiveCoordinateDistances = (coordinates: Coordinate[]) => {
+  const distances = new Map<string, number>();
+
+  for (let i = 0; i < coordinates.length; i++) {
+    const left = coordinates[i]!;
+    for (let j = i + 1; j < coordinates.length; j++) {
+      const right = coordinates[j]!;
+
+      const distance = getDistanceBetweenCoordinates(left, right);
+      const key = generateCompoundKeyFromCoordinates(left, right);
+      distances.set(key, distance);
+    }
+  }
+
+  return distances;
+};
