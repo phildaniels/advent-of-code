@@ -325,8 +325,8 @@ const partTwo = (input: string[]) => {
 
   //   console.log({ positions, maxX, maxY });
 
-  let startPosition: Position | undefined;
-  let endPosition: Position | undefined;
+  // let startPosition: Position | undefined;
+  // let endPosition: Position | undefined;
 
   const precalculatedAreasAndPositions: PrecalculatedAreaAndPosition[] = [];
 
@@ -359,8 +359,8 @@ const partTwo = (input: string[]) => {
       positions
     );
     if (rectangleFitsInsideLargerPolygon) {
-      startPosition = rectangle[0];
-      endPosition = rectangle[2];
+      // startPosition = rectangle[0];
+      // endPosition = rectangle[2];
       maxArea = area;
       break;
     }
