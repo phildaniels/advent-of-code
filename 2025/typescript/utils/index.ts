@@ -259,3 +259,156 @@ export const getExhaustiveCoordinateDistances = (coordinates: Coordinate[]) => {
 
   return distances;
 };
+
+export type Polygon = Position[];
+const isPositionOnLineSegment = (
+  [xPosition, yPosition]: Position,
+  [lineStartX, lineStartY]: Position,
+  [lineEndX, lineEndY]: Position
+) => {
+  const crossProduct =
+    (yPosition - lineStartY) * (lineEndX - lineStartX) -
+    (xPosition - lineStartX) * (lineEndY - lineStartY);
+  if (crossProduct !== 0) {
+    return false;
+  }
+
+  if (
+    xPosition < Math.min(lineStartX, lineEndX) ||
+    xPosition > Math.max(lineStartX, lineEndX)
+  ) {
+    return false;
+  }
+  if (
+    yPosition < Math.min(lineStartY, lineEndY) ||
+    yPosition > Math.max(lineStartY, lineEndY)
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+export const isPointInPolygon = (position: Position, polygon: Polygon) => {
+  const [xPosition, yPosition] = position;
+
+  for (let i = 0; i < polygon.length; i++) {
+    const current = polygon[i]!;
+    const next = polygon[(i + 1) % polygon.length]!;
+
+    if (isPositionOnLineSegment(position, current, next)) {
+      return true;
+    }
+  }
+
+  let intersections = 0;
+
+  for (let i = 0; i < polygon.length; i++) {
+    const [x1, y1] = polygon[i]!;
+    const [x2, y2] = polygon[(i + 1) % polygon.length]!;
+
+    if (y1 > yPosition !== y2 > yPosition) {
+      const xIntersect = x1 + ((yPosition - y1) * (x2 - x1)) / (y2 - y1);
+
+      if (xPosition < xIntersect) {
+        intersections++;
+      }
+    }
+  }
+
+  return intersections % 2 === 1;
+};
+
+const getCrossProduct = (
+  [leftX, leftY]: Position,
+  [rightX, rightY]: Position
+) => {
+  return leftX * rightY - leftY * rightX;
+};
+
+const doEdgesIntersect = (
+  [leftStart, leftEnd]: [Position, Position],
+  [rightStart, rightEnd]: [Position, Position]
+) => {
+  const d1 = getCrossProduct(
+    [rightEnd[0] - rightStart[0], rightEnd[1] - rightStart[1]],
+    [leftStart[0] - rightStart[0], leftStart[1] - rightStart[1]]
+  );
+  const d2 = getCrossProduct(
+    [rightEnd[0] - rightStart[0], rightEnd[1] - rightStart[1]],
+    [leftEnd[0] - rightStart[0], leftEnd[1] - rightStart[1]]
+  );
+  const d3 = getCrossProduct(
+    [leftEnd[0] - leftStart[0], leftEnd[1] - leftStart[1]],
+    [rightStart[0] - leftStart[0], rightStart[1] - leftStart[1]]
+  );
+  const d4 = getCrossProduct(
+    [leftEnd[0] - leftStart[0], leftEnd[1] - leftStart[1]],
+    [rightEnd[0] - leftStart[0], rightEnd[1] - leftStart[1]]
+  );
+
+  if (
+    ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+    ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))
+  ) {
+    return true;
+  }
+
+  if (d1 === 0 && isPositionOnLineSegment(leftStart, rightStart, rightEnd)) {
+    return true;
+  }
+  if (d2 === 0 && isPositionOnLineSegment(leftEnd, rightStart, rightEnd)) {
+    return true;
+  }
+  if (d3 === 0 && isPositionOnLineSegment(rightStart, leftStart, leftEnd)) {
+    return true;
+  }
+  if (d4 === 0 && isPositionOnLineSegment(rightEnd, leftStart, leftEnd)) {
+    return true;
+  }
+
+  return false;
+};
+
+export const doesPolygonFitInsidePolygon = (
+  innerPolygon: Polygon,
+  outerPolygon: Polygon
+) => {
+  // Check all vertices of inner polygon are inside outer polygon
+  for (const vertex of innerPolygon) {
+    if (!isPointInPolygon(vertex, outerPolygon)) {
+      return false;
+    }
+  }
+
+  // Check no edges intersect (cross each other)
+  for (let i = 0; i < innerPolygon.length; i++) {
+    const innerEdge: [Position, Position] = [
+      innerPolygon[i]!,
+      innerPolygon[(i + 1) % innerPolygon.length]!,
+    ];
+
+    for (let j = 0; j < outerPolygon.length; j++) {
+      const outerEdge: [Position, Position] = [
+        outerPolygon[j]!,
+        outerPolygon[(j + 1) % outerPolygon.length]!,
+      ];
+
+      if (doEdgesIntersect(innerEdge, outerEdge)) {
+        // Edges on the boundary are OK, true intersections are not
+        const innerOnOuter =
+          isPositionOnLineSegment(innerEdge[0], outerEdge[0], outerEdge[1]) ||
+          isPositionOnLineSegment(innerEdge[1], outerEdge[0], outerEdge[1]);
+        const outerOnInner =
+          isPositionOnLineSegment(outerEdge[0], innerEdge[0], innerEdge[1]) ||
+          isPositionOnLineSegment(outerEdge[1], innerEdge[0], innerEdge[1]);
+
+        if (!innerOnOuter && !outerOnInner) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+};
