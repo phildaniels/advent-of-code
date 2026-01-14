@@ -421,7 +421,7 @@ export type SearchOptions<T> = {
     currentItem: T,
     iteration: number,
     remainingFrontier: T[]
-  ) => T[] | Promise<T[]>;
+  ) => T[] | Promise<T[]> | undefined;
   targetFound: (
     item: T,
     iteration: number,
@@ -436,7 +436,11 @@ export type SearchOptions<T> = {
 } & (
   | {
       prune: true;
-      getItemKey?: (item: T) => string;
+      getItemKey: (item: T) => string;
+      checkTargetBeforePrune?: boolean;
+    }
+  | {
+      prune: true;
       shouldPrune: (
         item: T,
         iteration: number,
@@ -514,7 +518,7 @@ export const search = async <T>(options: SearchOptions<T>) => {
         }
       }
 
-      if (options.getItemKey) {
+      if ("getItemKey" in options) {
         const key = options.getItemKey(current);
         if (processed.has(key)) {
           continue;
@@ -524,7 +528,7 @@ export const search = async <T>(options: SearchOptions<T>) => {
       }
 
       if (
-        options.shouldPrune &&
+        "shouldPrune" in options &&
         (await options.shouldPrune(current, iteration, frontier))
       ) {
         continue;
@@ -541,7 +545,9 @@ export const search = async <T>(options: SearchOptions<T>) => {
     }
 
     const nextItems = await getNextItems(current, iteration, frontier);
-    frontier.push(...nextItems);
+    if (nextItems) {
+      frontier.push(...nextItems);
+    }
   }
 };
 

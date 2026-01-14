@@ -9,6 +9,7 @@ import dayseven from "./dayseven";
 import dayeight from "./dayeight";
 import daynine from "./daynine";
 import dayten from "./dayten";
+import dayeleven from "./dayeleven";
 
 const problems: Array<{
   partOne: (() => number) | (() => Promise<number>);
@@ -63,6 +64,11 @@ const problems: Array<{
   {
     partOne: dayten.partOne,
     partTwo: dayten.partTwo,
+    cache: true,
+  },
+  {
+    partOne: dayeleven.partOne,
+    partTwo: dayeleven.partTwo,
     cache: true,
   },
 ];
