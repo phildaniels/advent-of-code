@@ -1,4 +1,5 @@
 import { Temporal } from "@js-temporal/polyfill";
+import { isTemplateExpression } from "typescript";
 
 export const getFileText = async (cwd: string, fileName: string) => {
   const data = Bun.file(`${cwd}/${fileName}`);
@@ -49,7 +50,7 @@ export type CachedEntry<T extends Record<string, unknown>> = {
   entry: T;
 };
 
-export type Answer = { partOne: string | number; partTwo: string | number };
+export type Answer = { partOne?: number; partTwo?: number };
 
 export type Answers = Record<number, Answer | undefined>;
 
@@ -407,6 +408,155 @@ export const doesPolygonFitInsidePolygon = (
           return false;
         }
       }
+    }
+  }
+
+  return true;
+};
+
+export type SearchOptions<T> = {
+  initialItems: T[];
+  maxIterations?: number;
+  getNextItems: (
+    currentItem: T,
+    iteration: number,
+    remainingFrontier: T[]
+  ) => T[] | Promise<T[]>;
+  targetFound: (
+    item: T,
+    iteration: number,
+    remainingFrontier: T[]
+  ) => boolean | Promise<boolean>;
+  onTargetFound: (
+    item: T,
+    iteration: number,
+    remainingFrontier: T[]
+  ) => void | Promise<void>;
+  continueOnTargetFound?: boolean;
+} & (
+  | {
+      prune: true;
+      getItemKey?: (item: T) => string;
+      shouldPrune: (
+        item: T,
+        iteration: number,
+        remainingFrontier: T[]
+      ) => boolean | Promise<boolean>;
+      checkTargetBeforePrune?: boolean;
+    }
+  | { prune: false }
+) &
+  (
+    | {
+        algorithm: "BFS" | "DFS";
+      }
+    | {
+        algorithm: "ASTAR";
+        heuristicFunction: (item: T) => number;
+        heuristicPriority: "lowest" | "highest";
+      }
+  );
+
+const getNextItemFromFrontier = <T>(
+  frontier: T[],
+  options: SearchOptions<T>
+) => {
+  switch (options.algorithm) {
+    case "BFS": {
+      return frontier.shift();
+    }
+
+    case "DFS": {
+      return frontier.pop();
+    }
+
+    case "ASTAR": {
+      const heuristicFunction = options.heuristicFunction;
+      const heuristicPriority = options.heuristicPriority;
+      frontier.sort((a, b) =>
+        heuristicPriority === "highest"
+          ? heuristicFunction(b) - heuristicFunction(a)
+          : heuristicFunction(a) - heuristicFunction(b)
+      );
+      return frontier.pop();
+    }
+  }
+};
+
+export const search = async <T>(options: SearchOptions<T>) => {
+  const {
+    initialItems: frontier,
+    maxIterations,
+    targetFound,
+    onTargetFound,
+    continueOnTargetFound,
+    getNextItems,
+    prune,
+  } = options;
+  const processed = new Set<string>();
+  let iteration = 0;
+  while (frontier.length > 0) {
+    iteration++;
+    if (maxIterations !== undefined && maxIterations < iteration) {
+      break;
+    }
+    const current = getNextItemFromFrontier(frontier, options)!;
+
+    if (prune) {
+      if (options.checkTargetBeforePrune) {
+        if (await targetFound(current, iteration, frontier)) {
+          await onTargetFound(current, iteration, frontier);
+          if (continueOnTargetFound) {
+            continue;
+          } else {
+            break;
+          }
+        }
+      }
+
+      if (options.getItemKey) {
+        const key = options.getItemKey(current);
+        if (processed.has(key)) {
+          continue;
+        }
+
+        processed.add(key);
+      }
+
+      if (
+        options.shouldPrune &&
+        (await options.shouldPrune(current, iteration, frontier))
+      ) {
+        continue;
+      }
+    }
+
+    if (await targetFound(current, iteration, frontier)) {
+      await onTargetFound(current, iteration, frontier);
+      if (options.continueOnTargetFound) {
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    const nextItems = await getNextItems(current, iteration, frontier);
+    frontier.push(...nextItems);
+  }
+};
+
+export const areArraysEqual = <T>(left: T[], right: T[]) => {
+  if ((!left && right) || (!right && left)) {
+    return false;
+  }
+
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let i = 0; i < left.length; i++) {
+    if (left[i] !== right[i]) {
+      return false;
     }
   }
 

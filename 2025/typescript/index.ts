@@ -10,7 +10,11 @@ import dayeight from "./dayeight";
 import daynine from "./daynine";
 import dayten from "./dayten";
 
-const problems = [
+const problems: Array<{
+  partOne: (() => number) | (() => Promise<number>);
+  partTwo: (() => number) | (() => Promise<number>);
+  cache: boolean;
+}> = [
   {
     partOne: dayone.partOne,
     partTwo: dayone.partTwo,
@@ -59,7 +63,7 @@ const problems = [
   {
     partOne: dayten.partOne,
     partTwo: dayten.partTwo,
-    cache: false,
+    cache: true,
   },
 ];
 
@@ -77,18 +81,43 @@ for (const [index, problem] of problems.entries()) {
   const cachedResult = answerCache[day];
   if (!cachedResult && problem.cache) {
     console.log("cache miss for day", day);
+  } else if (
+    problem.cache &&
+    !!!cachedResult?.partOne &&
+    !!cachedResult?.partTwo
+  ) {
+    console.log("cache miss for day", day, "part one");
+  } else if (
+    problem.cache &&
+    !!cachedResult?.partOne &&
+    !!!cachedResult?.partTwo
+  ) {
+    console.log("cache miss for day", day, "part two");
   }
 
-  const partOneResult = cachedResult?.partOne ?? problem.partOne();
-  console.log(`Part One: ${partOneResult}`);
-  const partTwoResult = cachedResult?.partTwo ?? problem.partTwo();
-  console.log(`Part Two: ${partTwoResult}`);
+  const partOneCache = cachedResult?.partOne;
+  let partOneFromCache = !!partOneCache;
+  const partOne = partOneCache ?? problem.partOne();
+  const partOneResult = partOne instanceof Promise ? await partOne : partOne;
+  if (problem.cache && partOneResult !== 0) {
+    answerCache[day] = { partOne: partOneResult, partTwo: undefined };
+  }
+
+  console.log(
+    `Part One: ${partOneResult}${partOneFromCache ? " (cached)" : ""}`
+  );
+  const partTwoCache = cachedResult?.partTwo;
+  let partTwoFromCache = !!partTwoCache;
+  const partTwo = partTwoCache ?? problem.partTwo();
+  const partTwoResult = partTwo instanceof Promise ? await partTwo : partTwo;
+  if (problem.cache && partTwoResult !== 0) {
+    answerCache[day] = { ...answerCache[day], partTwo: partTwoResult };
+  }
+
+  console.log(
+    `Part Two: ${partTwoResult}${partTwoFromCache ? " (cached)" : ""}`
+  );
   console.log();
 
-  if (problem.cache) {
-    answerCache[day] = { partOne: partOneResult, partTwo: partTwoResult };
-  } else {
-    answerCache[day] = undefined;
-  }
   await writeCachedAnswers(__dirname, answerCache);
 }
