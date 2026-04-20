@@ -10,6 +10,7 @@ import dayeight from "./dayeight";
 import daynine from "./daynine";
 import dayten from "./dayten";
 import dayeleven from "./dayeleven";
+import daytwelve from "./daytwelve";
 
 const problems: Array<{
   partOne: (() => number) | (() => Promise<number>);
@@ -71,6 +72,11 @@ const problems: Array<{
     partTwo: dayeleven.partTwo,
     cache: true,
   },
+  {
+    partOne: daytwelve.partOne,
+    partTwo: daytwelve.partTwo,
+    cache: true,
+  },
 ];
 
 let answerCache: Answers = {};
@@ -110,7 +116,7 @@ for (const [index, problem] of problems.entries()) {
   }
 
   console.log(
-    `Part One: ${partOneResult}${partOneFromCache ? " (cached)" : ""}`
+    `Part One: ${partOneResult}${partOneFromCache ? " (cached)" : ""}`,
   );
   const partTwoCache = cachedResult?.partTwo;
   let partTwoFromCache = !!partTwoCache;
@@ -121,7 +127,7 @@ for (const [index, problem] of problems.entries()) {
   }
 
   console.log(
-    `Part Two: ${partTwoResult}${partTwoFromCache ? " (cached)" : ""}`
+    `Part Two: ${partTwoResult}${partTwoFromCache ? " (cached)" : ""}`,
   );
   console.log();
 
